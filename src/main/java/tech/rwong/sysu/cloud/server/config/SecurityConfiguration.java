@@ -49,12 +49,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/sign_up").permitAll();
+        http.authorizeRequests().antMatchers("/user/sign_up").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.csrf().disable();
         http.cors();
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.logout().logoutUrl("/log_out").invalidateHttpSession(true).deleteCookies("JSESSIONID")
+        http.logout().logoutUrl("/user/log_out").invalidateHttpSession(true).deleteCookies("JSESSIONID")
             .logoutSuccessHandler(new LogoutSuccessHandler() {
                 @Override
                 public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
@@ -94,7 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
         filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         filter.setAuthenticationFailureHandler(authenticationFailureHandler);
-        filter.setFilterProcessesUrl("/sign_in");
+        filter.setFilterProcessesUrl("/user/sign_in");
 
         //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
         filter.setAuthenticationManager(authenticationManagerBean());

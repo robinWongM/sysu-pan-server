@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.rwong.sysu.cloud.server.dto.UserDto;
 import tech.rwong.sysu.cloud.server.exception.ResourceNotFoundException;
+import tech.rwong.sysu.cloud.server.model.Node;
 import tech.rwong.sysu.cloud.server.model.User;
 import tech.rwong.sysu.cloud.server.repository.UserRepository;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
