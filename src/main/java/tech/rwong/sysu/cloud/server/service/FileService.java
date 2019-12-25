@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class FileService {
@@ -78,7 +79,7 @@ public class FileService {
 
         Node folderNode = createFolder(
                 user,
-                String.join("/", pathComponents));
+                String.join("/", pathComponents) + "/");
         Node fileNode = nodeService.createFile(filename, folderNode, user);
         try {
             Path localFile = Paths.get("./data/" + user.getId() + fileNode.getFullPath());
@@ -105,5 +106,43 @@ public class FileService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Node deleteFile(User user, Long id) {
+        Node fileNode = nodeService.findNodeById(user, id);
+        if (fileNode == null || fileNode.getType() != Node.NodeType.FILE) {
+            return null;
+        }
+        nodeService.deleteNode(fileNode);
+        Path localFile = Paths.get("./data/" + user.getId() + fileNode.getFullPath());
+        try {
+            Files.deleteIfExists(localFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return fileNode;
+    }
+
+    public Node deleteFolder(User user, String path) {
+        Node folderNode = nodeService.findFolderByFullPath(user, path);
+        if (folderNode == null || folderNode.getType() != Node.NodeType.FOLDER) {
+            return null;
+        }
+        // Will automatically delete all children node
+        nodeService.deleteNode(folderNode);
+        Path localFolder = Paths.get("./data/" + user.getId() + folderNode.getFullPath());
+        try {
+            try (Stream<Path> walk = Files.walk(localFolder)) {
+                walk.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .peek(System.out::println)
+                        .forEach(File::delete);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return folderNode;
     }
 }

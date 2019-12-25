@@ -45,4 +45,9 @@ public class NodeService {
         node.setUser(user);
         return repository.save(node);
     }
+
+    public Node deleteNode(Node node) {
+        this.repository.delete(node);
+        return node;
+    }
 }

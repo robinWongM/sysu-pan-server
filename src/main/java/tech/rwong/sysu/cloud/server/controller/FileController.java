@@ -1,5 +1,6 @@
 package tech.rwong.sysu.cloud.server.controller;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -8,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import tech.rwong.sysu.cloud.server.model.Node;
@@ -33,7 +35,7 @@ public class FileController {
 
         if (fileNode == null || fileNode.getType() != Node.NodeType.FILE
                 || !fileNode.getUser().getId().equals(currentUser.getId())) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found.");
         }
         return fileNode;
     }
@@ -56,7 +58,17 @@ public class FileController {
         User currentUser = (User) ((Authentication) principal).getPrincipal();
         Node fileNode = fileService.createFile(currentUser, fullPath, file);
         if (fileNode == null) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload failed.");
+        }
+        return fileNode;
+    }
+
+    @DeleteMapping("/{id}")
+    public Node deleteOneFile(Principal principal, @PathVariable(value = "id") final String id) {
+        User currentUser = (User) ((Authentication) principal).getPrincipal();
+        Node fileNode = fileService.deleteFile(currentUser, Long.parseLong(id));
+        if (fileNode == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found.");
         }
         return fileNode;
     }

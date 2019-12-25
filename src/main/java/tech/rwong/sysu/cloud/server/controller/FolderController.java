@@ -38,4 +38,12 @@ public class FolderController {
                 .toString().replaceFirst("^/folders", "");
         return fileService.createFolder(currentUser, path);
     }
+
+    @DeleteMapping(value = {"**"})
+    public Node deleteFolder(Principal principal, HttpServletRequest request) {
+        User currentUser = (User) ((Authentication) principal).getPrincipal();
+        final String path = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)
+                .toString().replaceFirst("^/folders", "");
+        return fileService.deleteFolder(currentUser, path);
+    }
 }
