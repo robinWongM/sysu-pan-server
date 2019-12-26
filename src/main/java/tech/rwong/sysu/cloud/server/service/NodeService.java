@@ -19,7 +19,10 @@ public class NodeService {
         return this.repository.findByUserAndFullPath(user, fullPath);
     }
     public Node findFolderByFullPath(User user, String fullPath) {
-        return this.repository.findByUserAndFullPath(user, fullPath + "/");
+        if (!fullPath.endsWith("/")) {
+            fullPath = fullPath + "/";
+        }
+        return this.repository.findByUserAndFullPath(user, fullPath);
     }
 
     public Node createFolder(String name, Node parent, User user) {
