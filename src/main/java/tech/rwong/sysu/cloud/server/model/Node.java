@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import tech.rwong.sysu.cloud.server.misc.ChildrenNodeSerializer;
 
@@ -51,4 +52,8 @@ public class Node {
             mappedBy = "parent"
     )
     private List<Node> children = new LinkedList<>();
+
+    @JsonIgnore
+    @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "file")
+    private Share share;
 }
