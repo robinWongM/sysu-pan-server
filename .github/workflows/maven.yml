@@ -21,4 +21,6 @@ jobs:
       with:
         java-version: 11
     - name: Build Docker image with Maven
-      run: ./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=m208/sysu-pan-server
+      run: |
+        chmod +x mvnw
+        ./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=m208/sysu-pan-server
