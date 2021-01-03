@@ -20,7 +20,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Build Docker image with Maven
+    - name: Build and push Docker image with Maven
       run: |
         chmod +x mvnw
         ./mvnw spring-boot:build-image -Dmaven.test.skip=true -Dspring-boot.build-image.imageName=m208/sysu-pan-server
+        echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
+        docker tag docker.io/m208/sysu-pan-server:latest ghcr.io/robinwongm/sysu-pan-server:latest
+        docker push ghcr.io/robinwongm/sysu-pan-server:latest
